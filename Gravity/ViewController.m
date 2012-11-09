@@ -54,6 +54,11 @@
     // Initalisation de l'animation
     float angle = atan2f(p.x, p.y);
     NSLog(@"%f", angle);
+    int i;
+    
+    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"position.x"];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    animation.duration = 0.2;
     
     #pragma mark - X Position
 	p.x += x;
@@ -99,7 +104,7 @@
 			yEdge = YES;
 			needTink = YES;
             
-            p.y = p.y + (y * angle) *2; // Bounce Y
+            p.y = p.y + (y * angle) *2; // Bounce Y-
 		}
 	} else {
 		yEdge = NO;
