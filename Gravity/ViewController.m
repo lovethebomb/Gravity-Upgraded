@@ -34,7 +34,7 @@
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
 {
-    #pragma mark - Init
+    #pragma mark - Init    
 	BOOL needTink = NO;
 		// get acceleration value
 	float x = acceleration.x * 100;
@@ -49,6 +49,9 @@
 		// make sure we stay on screen (32 is half of image size)
 	CGRect limitRect = CGRectInset(self.view.bounds, 32, 32);
 	
+    // Initalisation de l'animation
+    float angle = atan2f(p.x, p.y);
+    NSLog(@"%f", angle);
     
     #pragma mark - X Position
 	p.x += x;
@@ -59,6 +62,7 @@
 				// set the flag and play sound
 			xEdge = YES;
 			needTink = YES;
+            
 		}
 	} else if (p.x > limitRect.origin.x + limitRect.size.width) {
 			// too far right
@@ -69,13 +73,16 @@
             // Add Bounce // MODIF
             
 			needTink = YES;
+            
+            p.x = p.x + (x * angle)*2; // Bounce X
+            
 		}
 	} else {
 			// reset flag
 		xEdge = NO;
 	}
 
-    #pragma mark - X Position
+    #pragma mark - Y Position
     // repeat for y, use negative offset (y goes down)
 	p.y -= y;
 	if (p.y < limitRect.origin.y) {
@@ -89,6 +96,8 @@
 		if (yEdge == NO)	{
 			yEdge = YES;
 			needTink = YES;
+            
+            p.y = p.y + (y * angle) *2; // Bounce Y
 		}
 	} else {
 		yEdge = NO;
