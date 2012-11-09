@@ -11,6 +11,7 @@
 	// we need the QuartzCore framework for animation
 #import <QuartzCore/QuartzCore.h>
 
+
 @implementation ViewController
 
 - (void)viewDidLoad
@@ -34,11 +35,14 @@
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
 {
+//    NSLog(@"Acceleration : %f / %f / %f", acceleration.x, acceleration.y, acceleration.z);
     #pragma mark - Init
 	BOOL needTink = NO;
 		// get acceleration value
 	float x = acceleration.x * 100;
 	float y = acceleration.y * 100;
+    float z = acceleration.z * 100;
+
 		// get image position
 	CGPoint p = self.gravImageView.center;
 		// create the path for animation, move to current point
@@ -95,7 +99,9 @@
 	}
 	
 	
-    
+    # pragma mark -  Animations
+    // Animations - Move
+
     // now we have a new point in p, move image
 	self.gravImageView.center = p;
     // complete the path
@@ -107,22 +113,51 @@
     // give the animation the path to use, then release it (anim will retain it)
 	anim.path = path;
 	CGPathRelease(path);
-    // give the animation to the imageView's CALayer
-	[self.gravImageView.layer addAnimation:anim forKey:@"anim"];
+
+    // Animations - Rotation
+    CAKeyframeAnimation *rotate = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
+    NSMutableArray *valuesArray = [NSMutableArray array];
+    CATransform3D rStep;
+    /*
+    for (int i=0; i<360; i++) {
+        rStep = CATransform3DMakeRotation(0.017544*i, x, y, z);
+        [valuesArray addObject:[NSValue valueWithCATransform3D:rStep]];
+     }*/
+    int i = x*1.234;
+    rStep = CATransform3DMakeRotation(0.017544*i, x*1.1234, y*1.234, z*1.1234);
+    [valuesArray addObject:[NSValue valueWithCATransform3D:rStep]];
+    [rotate setValues:valuesArray];
+
     
-	
+    // give animations to the imageView's CALayer
+	[self.gravImageView.layer addAnimation:rotate forKey:@"rotate"];
+    [self.gravImageView.layer addAnimation:anim forKey:@"anim"];
+    
+    
 	if (needTink)	{
 			// play sound at the end of animation
 		[NSTimer scheduledTimerWithTimeInterval:0.09 target:self selector:@selector(playTink:) userInfo:nil repeats:NO];
-	}
+    }
 }
 
-#pragma mark - Sound
+#pragma mark - Sound & flash
 
 	// timer callback
 - (void)playTink:(NSTimer *)timer
 {
 	AudioServicesPlaySystemSound(tink);
+    // flash
+    self.view.backgroundColor = [UIColor whiteColor];
+    [NSTimer scheduledTimerWithTimeInterval:0.09 target:self selector:@selector(flash:) userInfo:nil repeats:NO];
+    // Change Image
+    
+    
 }
 
+
+// flash callback
+- (void)flash:(NSTimer *)timer
+{
+    self.view.backgroundColor = [UIColor blackColor];
+}
 @end
