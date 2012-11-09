@@ -66,7 +66,7 @@
 		if (xEdge == NO)	{
 				// set the flag and play sound
 			xEdge = YES;
-            // Add Bounce
+            // Add Bounce // MODIF
             
 			needTink = YES;
 		}
